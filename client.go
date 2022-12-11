@@ -2,7 +2,6 @@ package garara
 
 import (
 	"encoding/xml"
-	"fmt"
 	"io"
 	"net/http"
 	"strings"
@@ -34,10 +33,10 @@ func (c *Client) V1SendQueueMode(r V1MailRequest) (string, error) {
 	}
 	req, err := http.NewRequest("POST", "https://bvam001.am.arara.com/tm/lpmail_qmode.php", strings.NewReader(string(rb)))
 	req.Header.Set("Content-Type", "application/xml")
-	req.Header.Set("X-AutomailUser", c.v1User)
-	req.Header.Set("X-AutomailPassword", c.v1Pass)
-	req.Header.Set("X-AutomailUseSite", c.SiteID)
-	req.Header.Set("X-AutomailUseService", c.ServiceID)
+	req.Header["X-AutomailUser"] = []string{c.v1User}
+	req.Header["X-AutomailPassword"] = []string{c.v1Pass}
+	req.Header["X-AutomailUseSite"] = []string{c.SiteID}
+	req.Header["X-AutomailUseService"] = []string{c.ServiceID}
 
 	res, err := c.Do(req)
 	if err != nil {
@@ -50,11 +49,6 @@ func (c *Client) V1SendQueueMode(r V1MailRequest) (string, error) {
 		return "", err
 	}
 
-	fmt.Println("<------debug print-------->")
-
-	fmt.Printf("%v \n", req.Header)
-	fmt.Println(string(b))
-	fmt.Println("<------debug print-------->")
 	return string(b), nil
 
 }
