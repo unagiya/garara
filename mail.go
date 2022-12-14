@@ -14,6 +14,8 @@ type Delivery struct {
 	Setting   Setting    `xml:"setting"`
 	Contents  Contents   `xml:"contents"`
 	SendList  SendList   `xml:"send_list"`
+	//下記はresultで利用
+	DeliveryID string `xml:"delivery_id,omitempty"`
 }
 
 type Setting struct {
@@ -62,4 +64,9 @@ type ExtData struct {
 	ListID        string      `xml:"list_id,omitempty"`
 	Query         CDATAString `xml:"query,omitempty"`
 	ExtractTiming TimingType  `xml:"extract_timing,omitempty"`
+}
+
+type V1MailResurt struct {
+	requestBase
+	Delivery
 }
