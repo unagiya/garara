@@ -31,3 +31,8 @@ type AttrIdCdata struct {
 	ID int `xml:"id,attr"`
 	CDATAString
 }
+
+type AttrCodeString struct {
+	Code  string `xml:"code,attr"`
+	Value string `xml:",innerxml"`
+}

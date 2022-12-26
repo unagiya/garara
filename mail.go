@@ -3,7 +3,7 @@ package garara
 type MailRequestHeader struct {
 }
 type V1MailRequest struct {
-	requestBase
+	MailRoot
 	Delivery []Delivery `xml:"delivery"`
 }
 
@@ -14,8 +14,6 @@ type Delivery struct {
 	Setting   Setting    `xml:"setting"`
 	Contents  Contents   `xml:"contents"`
 	SendList  SendList   `xml:"send_list"`
-	//下記はresultで利用
-	DeliveryID string `xml:"delivery_id,omitempty"`
 }
 
 type Setting struct {
@@ -66,7 +64,15 @@ type ExtData struct {
 	ExtractTiming TimingType  `xml:"extract_timing,omitempty"`
 }
 
-type V1MailResurt struct {
-	requestBase
-	Delivery
+type V1MailResult struct {
+	MailRoot
+	Delivery []ResDelivery `xml:"delivery"`
+}
+
+type ResDelivery struct {
+	AttrID
+	DeliverID string         `xml:"deliver_id"`
+	RequestID string         `xml:"request_id"`
+	ExecCount string         `xml:"exec_cnt"`
+	Result    AttrCodeString `xml:"result"`
 }

@@ -2,7 +2,7 @@ package garara
 
 import "encoding/xml"
 
-type requestBase struct {
+type MailRoot struct {
 	XMLName xml.Name `xml:"mail"`
 }
 

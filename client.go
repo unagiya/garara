@@ -27,10 +27,10 @@ func (c *Client) SetV1Pass(password string) {
 	c.v1Pass = password
 }
 
-func (c *Client) V1SendQueueMode(r V1MailRequest, endpoint string) (string, error) {
+func (c *Client) V1SendQueueMode(r V1MailRequest, endpoint string) ([]ResDelivery, error) {
 	rb, err := xml.Marshal(r)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	req, err := http.NewRequest("POST", endpoint, strings.NewReader(string(rb)))
 	req.Header.Set("Content-Type", "application/xml")
@@ -41,15 +41,22 @@ func (c *Client) V1SendQueueMode(r V1MailRequest, endpoint string) (string, erro
 
 	res, err := c.Do(req)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	defer res.Body.Close()
 
 	b, err := io.ReadAll(res.Body)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
-	return string(b), nil
+	var resp *V1MailResult
+	resp = &V1MailResult{}
+	err = xml.Unmarshal(b, resp)
+	if err != nil {
+		return nil, err
+	}
+
+	return resp.Delivery, nil
 
 }
