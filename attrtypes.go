@@ -23,16 +23,29 @@ type AttrID struct {
 }
 
 type AttrIdString struct {
-	ID    int    `xml:"id,attr"`
+	AttrID
 	Value string `xml:",innerxml"`
 }
 
 type AttrIdCdata struct {
-	ID int `xml:"id,attr"`
+	AttrID
 	CDATAString
 }
 
+type AttrCode struct {
+	Code string `xml:"code,attr"`
+}
+
 type AttrCodeString struct {
-	Code  string `xml:"code,attr"`
+	AttrCode
 	Value string `xml:",innerxml"`
+}
+
+type AttrCodeCdata struct {
+	AttrCode
+	CDATAString
+}
+
+type AttrCharacterID struct {
+	ID string `xml:"id,attr"`
 }

@@ -35,9 +35,35 @@ const (
 	WINDOWS_PHONE
 )
 
+func (d DeviceType) String() string {
+	switch d {
+	case NONE:
+		return "NONE"
+	case PC:
+		return "PC"
+	case PORTABLE_PHONE:
+		return "PORTABLE_PHONE"
+	case I_PHONE:
+		return "I_PHONE"
+	case ANDROID_PHONE:
+		return "ANDROID_PHONE"
+	case WINDOWS_PHONE:
+		return "WINDOWS_PHONE"
+	default:
+		return "Unknown"
+	}
+}
+
 type TimingType string
 
 const (
 	REQUEST  TimingType = "request"
 	DELIVERY TimingType = "delivery"
+)
+
+type ExcludeType string
+
+const (
+	INVALID = "0" //無効
+	VALID   = "1" //有効
 )
