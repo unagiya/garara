@@ -48,7 +48,7 @@ type Contents struct {
 	Body       *AttrPart      `xml:"body,omitempty"`
 	Image      []AttrIdString `xml:"image,omitempty"`
 	Text       []AttrIdCdata  `xml:"text,omitempty"`
-	AttachFile string         `xml:"attach_file,omitempty"`
+	AttachFile []string       `xml:"attach_file,omitempty"`
 	Template   *AttrID        `xml:"template,omitempty"`
 }
 

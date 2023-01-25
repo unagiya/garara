@@ -11,6 +11,8 @@ import (
 	"strings"
 )
 
+const attachMaxFileSize = 3
+
 type V1Client struct {
 	*http.Client
 	apiUser     string
@@ -319,4 +321,43 @@ func (c *V1Client) deleteReservation(ctx context.Context, r V1AuthRequest, host 
 
 	return resp, err
 
+}
+
+// SimpleMailContentBuilder はメール送信時のcontentを作成します。
+// imagesはContent.Imageにid,0から順番にデータを作成します。
+// textsはContent.Textにid,0から順番にデータを作成します。
+// filesがattachMaxFileSize（現仕様では3）よりデータ量が大きい場合エラーを返却します。
+func (c *V1Client) SimpleMailContentBuilder(subject, body string, part PartType, images, texts, files []string) (cont Contents, err error) {
+	if len(files) > attachMaxFileSize {
+		return cont, errors.New("too many files")
+	}
+
+	if part.String() == "Unknown" {
+		err = errors.New("PartType Unknown")
+	}
+
+	cont.Subject.CDATA = subject
+	cont.Body.Part = part
+	cont.Body.CDATA = body
+
+	is := make([]AttrIdString, 0, len(images))
+	for k, i := range images {
+		var ids AttrIdString
+		ids.ID = k
+		ids.Value = i
+		is = append(is, ids)
+	}
+	cont.Image = is
+
+	ts := make([]AttrIdCdata, 0, len(texts))
+	for k, t := range texts {
+		var idc AttrIdCdata
+		idc.ID = k
+		idc.CDATA = t
+		ts = append(ts, idc)
+	}
+	cont.Text = ts
+	cont.AttachFile = files
+
+	return cont, nil
 }

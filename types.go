@@ -24,6 +24,17 @@ const (
 	HTML PartType = "html"
 )
 
+func (p PartType) String() string {
+	switch p {
+	case TEXT:
+		return "text"
+	case HTML:
+		return "html"
+	default:
+		return "Unknown"
+	}
+}
+
 type DeviceType int
 
 const (
