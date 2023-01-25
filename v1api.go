@@ -26,7 +26,7 @@ func (c *V1Client) SendQueueMode(ctx context.Context, r V1MailRequest, host stri
 		return nil, err
 	}
 
-	req, err := http.NewRequest(http.MethodPost, fmt.Sprintf(mailEndpoint, host), strings.NewReader(string(rb)))
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, fmt.Sprintf(mailEndpoint, host), strings.NewReader(string(rb)))
 	if err != nil {
 		return nil, err
 	}
@@ -37,7 +37,6 @@ func (c *V1Client) SendQueueMode(ctx context.Context, r V1MailRequest, host stri
 	req.Header["X-AutomailUseSite"] = []string{strconv.Itoa(c.SiteID)}
 	req.Header["X-AutomailUseService"] = []string{strconv.Itoa(c.ServiceID)}
 
-	req = req.WithContext(ctx)
 	return c.getResDeliveries(req)
 }
 
@@ -62,14 +61,13 @@ func (c *V1Client) GetStatusByDeliverIDs(ctx context.Context, deliverIDs []strin
 		return nil, err
 	}
 
-	req, err := http.NewRequest(http.MethodPost, fmt.Sprintf(infoEndpoint, host), strings.NewReader(string(x)))
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, fmt.Sprintf(infoEndpoint, host), strings.NewReader(string(x)))
 	if err != nil {
 		return nil, err
 	}
 
 	req.Header.Set("Content-Type", "application/octet-stream")
 
-	req = req.WithContext(ctx)
 	return c.getStatus(ctx, r, host)
 }
 
@@ -123,14 +121,13 @@ func (c *V1Client) GetClickLog(ctx context.Context, deliverID, termFrom, termTo,
 	form.Add("term_to", termTo)
 
 	body := strings.NewReader(form.Encode())
-	req, err := http.NewRequest(http.MethodPost, fmt.Sprintf(clickCountEndpoint, host), body)
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, fmt.Sprintf(clickCountEndpoint, host), body)
 	if err != nil {
 		return nil, err
 	}
 
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 
-	req = req.WithContext(ctx)
 	res, err := c.Do(req)
 	if err != nil {
 		return nil, err
@@ -158,14 +155,12 @@ func (c *V1Client) GetErrorFilter(ctx context.Context, host string) (*ErrorFilte
 	form.Add("user_passwd", c.mgrPassword)
 
 	body := strings.NewReader(form.Encode())
-	req, err := http.NewRequest(http.MethodPost, fmt.Sprintf(errorFilterEndpoint, host), body)
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, fmt.Sprintf(errorFilterEndpoint, host), body)
 	if err != nil {
 		return nil, err
 	}
 
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-
-	req = req.WithContext(ctx)
 
 	res, err := c.Do(req)
 	if err != nil {
@@ -255,14 +250,12 @@ func (c *V1Client) GetResultListByDeliverIDs(ctx context.Context, deliverIDs []s
 		return nil, err
 	}
 
-	req, err := http.NewRequest(http.MethodPost, fmt.Sprintf(infoEndpoint, host), strings.NewReader(string(x)))
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, fmt.Sprintf(infoEndpoint, host), strings.NewReader(string(x)))
 	if err != nil {
 		return nil, err
 	}
 
 	req.Header.Set("Content-Type", "application/octet-stream")
-
-	req = req.WithContext(ctx)
 
 	res, err := c.Do(req)
 	if err != nil {

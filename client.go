@@ -78,14 +78,13 @@ func (c *V1Client) getStatus(ctx context.Context, r V1AuthRequest, host string) 
 		return nil, err
 	}
 
-	req, err := http.NewRequest(http.MethodPost, fmt.Sprintf(infoEndpoint, host), strings.NewReader(string(x)))
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, fmt.Sprintf(infoEndpoint, host), strings.NewReader(string(x)))
 	if err != nil {
 		return nil, err
 	}
 
 	req.Header.Set("Content-Type", "application/octet-stream")
 
-	req = req.WithContext(ctx)
 	return c.getResDeliveries(req)
 }
 
@@ -222,14 +221,12 @@ func (c *V1Client) getErrorDeliveries(ctx context.Context, r V1AuthRequest, host
 		return nil, err
 	}
 
-	req, err := http.NewRequest(http.MethodPost, fmt.Sprintf(infoEndpoint, host), strings.NewReader(string(x)))
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, fmt.Sprintf(infoEndpoint, host), strings.NewReader(string(x)))
 	if err != nil {
 		return nil, err
 	}
 
 	req.Header.Set("Content-Type", "application/octet-stream")
-
-	req = req.WithContext(ctx)
 
 	res, err := c.Do(req)
 	if err != nil {
@@ -288,14 +285,12 @@ func (c *V1Client) deleteReservation(ctx context.Context, r V1AuthRequest, host 
 		return resp, err
 	}
 
-	req, err := http.NewRequest(http.MethodPost, fmt.Sprintf(infoEndpoint, host), strings.NewReader(string(x)))
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, fmt.Sprintf(infoEndpoint, host), strings.NewReader(string(x)))
 	if err != nil {
 		return resp, err
 	}
 
 	req.Header.Set("Content-Type", "application/octet-stream")
-
-	req = req.WithContext(ctx)
 
 	res, err := c.Do(req)
 	if err != nil {
