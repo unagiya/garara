@@ -304,6 +304,7 @@ func (c *V1Client) DeleteReservationByRequestIDs(ctx context.Context, requestIDs
 	for k, v := range requestIDs {
 		var d Delivery
 		d.ID = k
+		d.Action = DELETE
 		d.RequestID = v
 		deliveries = append(deliveries, d)
 	}
