@@ -116,9 +116,11 @@ func SimpleV1MailContentsBuilder(subject, body string, part PartType, images, te
 		err = errors.New("PartType Unknown")
 	}
 
-	cont.Subject.CDATA = subject
-	cont.Body.Part = part
-	cont.Body.CDATA = body
+	s := &CDATAString{CDATA: subject}
+	cont.Subject = s
+
+	b := &AttrPart{Part: part, CDATAString: CDATAString{CDATA: body}}
+	cont.Body = b
 
 	cont.Image = AttrIdStringsBuilder(images)
 
