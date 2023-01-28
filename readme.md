@@ -44,7 +44,7 @@ gararaは[アララメッセージ](https://am.arara.com/)を利用するため�
 
 #### v1 api usage
 
-1. メール送信
+メール送信
 ``` go
   c := garara.NewDefaultV1Client(
     [API User], 
@@ -85,5 +85,4 @@ gararaは[アララメッセージ](https://am.arara.com/)を利用するため�
   res, _ := c.SendQueueMode(ctx, r, [RequestHostName])
 ```
 
-
-license:mit
+※他のAPIはある程度直感的な使い方ができるかと思います。
