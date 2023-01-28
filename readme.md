@@ -1,5 +1,7 @@
 # garara
-[![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE)
+gararaは[アララメッセージ](https://am.arara.com/)を利用するためのサードパーティライブラリです。
+
+[![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](https://opensource.org/licenses/mit-license.php)
 
 ## APIs
 
@@ -26,3 +28,62 @@
   - id, deviceType, メールアドレス, intText, exttext, extImageの各string slice, keyFieldを引数に取り、SendListのDataを一つ作成する
   - intText, exttext, extImageの各string sliceはIDを0から自動採番する。
   - device typeは存在しない番号を入力するとエラーを返す
+- SimpleV1MailContentsBuilder
+  - メール配信のためのContentsを作成します。
+  - imagesはContent.Imageにid,0から順番にデータを作成します。
+  - textsはContent.Textにid,0から順番にデータを作成します。
+  - filesがattachMaxFileSize（現仕様では3）よりデータ量が大きい場合エラーを返却します。
+- SimpleV1SettingBuilder
+  - メール配信のためのsetting structを作成します。
+  - S/MIME, Openedの指定が範囲外の場合エラーを返却します。
+- V1MailDeliveryBuilder
+  - メール配信のためのdelivery structを作成します。
+- AttrIdCDataBuilder, AttrIdStringsBuilder
+  - []stringから[]AttrIdCdata, []AttrIdStringを作成します。
+  - idは0から順に振られます。
+
+#### v1 api usage
+
+1. メール送信
+``` go
+  c := garara.NewDefaultV1Client(
+    [API User], 
+    [API Password], 
+    [ManageSiteUser], 
+    [ManageSitePassword], 
+    [SiteID], 
+    [ServiceID],
+    )
+  
+  var r garara.V1MailRequest
+  u, _ := uuid.NewRandom()
+  s, _ := garara.SimpleV1SettingBuilder(
+    "now",
+    "From Name",
+    "from-address@example.com",
+    "",
+    0,
+    garara.UNUSE,
+    garara.USE,
+    garara.Option{},
+  )
+  
+  subject := "test message"
+  body := `
+<html>
+  <head></head>
+  <body>
+    Hello Message!!
+  </body>
+</html>
+`
+  cont, _ := garara.SimpleV1MailContentsBuilder(subject, body, garara.HTML, nil, nil, nil)
+  l := garara.SimpleV1SendListBuilder([]string{"send-mail-1@example.com", "send-mail-2@example.com"})
+  r.Delivery = garara.V1MailDeliveryBuilder(1, u.String(), s, cont, l)
+  
+  ctx := context.Background()
+  res, _ := c.SendQueueMode(ctx, r, [RequestHostName])
+```
+
+
+license:mit

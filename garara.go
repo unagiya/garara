@@ -6,6 +6,8 @@ import (
 	"sync"
 )
 
+const UNKNOWN = "Unknown"
+
 type MailRoot struct {
 	XMLName xml.Name `xml:"mail"`
 }
@@ -36,9 +38,9 @@ func SimpleV1SendListDataBuilder(id int, deviceType DeviceType, address string, 
 	d.ID = id
 	d.Address.Device = deviceType
 	d.Address.Value = address
+	d.KeyField = keyField
 
 	i := make([]AttrIdCdata, 0, len(intText))
-	var et, ei []AttrIdString
 	var wg sync.WaitGroup
 
 	wg.Add(1)
@@ -50,30 +52,42 @@ func SimpleV1SendListDataBuilder(id int, deviceType DeviceType, address string, 
 			it.CDATA = v
 			i = append(i, it)
 		}
+		d.IntText = i
 	}()
 
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		et = attrIdStringsBuilder(extText)
+		d.ExtText = AttrIdStringsBuilder(extText)
 	}()
 
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		ei = attrIdStringsBuilder(extImage)
+		d.ExtImage = AttrIdStringsBuilder(extImage)
 	}()
 	wg.Wait()
-	d.IntText = i
-	d.ExtText = et
-	d.ExtImage = ei
-
-	d.KeyField = keyField
 
 	return d, nil
 }
 
-func attrIdStringsBuilder(ss []string) []AttrIdString {
+func AttrIdCDataBuilder(ss []string) []AttrIdCdata {
+	size := len(ss)
+	if size == 0 {
+		return nil
+	}
+
+	a := make([]AttrIdCdata, 0, size)
+	for k, v := range ss {
+		var c AttrIdCdata
+		c.ID = k
+		c.CDATA = v
+		a = append(a, c)
+	}
+	return a
+}
+
+func AttrIdStringsBuilder(ss []string) []AttrIdString {
 	size := len(ss)
 	if size == 0 {
 		return nil
@@ -87,4 +101,73 @@ func attrIdStringsBuilder(ss []string) []AttrIdString {
 		a = append(a, s)
 	}
 	return a
+}
+
+// SimpleV1MailContentsBuilder はメール送信時のcontentを作成します。
+// imagesはContent.Imageにid,0から順番にデータを作成します。
+// textsはContent.Textにid,0から順番にデータを作成します。
+// filesがattachMaxFileSize（現仕様では3）よりデータ量が大きい場合エラーを返却します。
+func SimpleV1MailContentsBuilder(subject, body string, part PartType, images, texts, files []string) (cont Contents, err error) {
+	if len(files) > attachMaxFileSize {
+		return cont, errors.New("too many files")
+	}
+
+	if part.String() == "Unknown" {
+		err = errors.New("PartType Unknown")
+	}
+
+	cont.Subject.CDATA = subject
+	cont.Body.Part = part
+	cont.Body.CDATA = body
+
+	cont.Image = AttrIdStringsBuilder(images)
+
+	ts := make([]AttrIdCdata, 0, len(texts))
+	for k, t := range texts {
+		var idc AttrIdCdata
+		idc.ID = k
+		idc.CDATA = t
+		ts = append(ts, idc)
+	}
+	cont.Text = ts
+	cont.AttachFile = files
+
+	return cont, nil
+}
+
+func SimpleV1SettingBuilder(sendData, fromName, from, envelopeFrom string, throttle int, smime, opened UseType, option Option) (s Setting, err error) {
+	err = nil
+	if smime.String() == UNKNOWN {
+		err = errors.New("smime type is unknown")
+		return s, err
+	}
+
+	if opened.String() == UNKNOWN {
+		err = errors.New("opened type is unknown")
+		return s, err
+	}
+
+	s.SendDate = sendData
+	s.FromName.CDATA = fromName
+	s.From = from
+	s.EnvelopeFrom = envelopeFrom
+	s.Option = option
+	s.Throttle = throttle
+	s.SMime.Use = smime
+	s.OpenedFlag.Use = opened
+
+	return s, err
+}
+
+// V1MailDeliveryBuilder はメール送信用のDeliveryを作成します。
+// Deliveryはメール送信用以外の項目もあるため、本builderを利用することで設定項目を特定します。
+// 引数に取る各structについても各SimpleBuilderを用意しています。
+func V1MailDeliveryBuilder(id int, requestID string, setting Setting, contents Contents, list SendList) (d Delivery) {
+	d.Action = RESERVE
+	d.ID = id
+	d.RequestID = requestID
+	d.Setting = setting
+	d.Contents = contents
+	d.SendList = list
+	return d
 }

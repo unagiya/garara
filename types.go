@@ -17,6 +17,17 @@ const (
 	USE
 )
 
+func (u UseType) String() string {
+	switch u {
+	case UNUSE:
+		return "UNUSE"
+	case USE:
+		return "USE"
+	default:
+		return UNKNOWN
+	}
+}
+
 type PartType string
 
 const (
@@ -31,7 +42,7 @@ func (p PartType) String() string {
 	case HTML:
 		return "html"
 	default:
-		return "Unknown"
+		return UNKNOWN
 	}
 }
 
@@ -61,7 +72,7 @@ func (d DeviceType) String() string {
 	case WINDOWS_PHONE:
 		return "WINDOWS_PHONE"
 	default:
-		return "Unknown"
+		return UNKNOWN
 	}
 }
 
