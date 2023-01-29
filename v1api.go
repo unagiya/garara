@@ -1,6 +1,7 @@
 package garara
 
 import (
+	"bytes"
 	"context"
 	"encoding/xml"
 	"errors"
@@ -26,7 +27,7 @@ func (c *V1Client) SendQueueMode(ctx context.Context, r V1MailRequest, host stri
 		return nil, err
 	}
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, fmt.Sprintf(mailEndpoint, host), strings.NewReader(string(rb)))
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, fmt.Sprintf(mailEndpoint, host), bytes.NewBuffer(rb))
 	if err != nil {
 		return nil, err
 	}
@@ -61,7 +62,7 @@ func (c *V1Client) GetStatusByDeliverIDs(ctx context.Context, deliverIDs []strin
 		return nil, err
 	}
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, fmt.Sprintf(infoEndpoint, host), strings.NewReader(string(x)))
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, fmt.Sprintf(infoEndpoint, host), bytes.NewBuffer(x))
 	if err != nil {
 		return nil, err
 	}
@@ -250,7 +251,7 @@ func (c *V1Client) GetResultListByDeliverIDs(ctx context.Context, deliverIDs []s
 		return nil, err
 	}
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, fmt.Sprintf(infoEndpoint, host), strings.NewReader(string(x)))
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, fmt.Sprintf(infoEndpoint, host), bytes.NewBuffer(x))
 	if err != nil {
 		return nil, err
 	}

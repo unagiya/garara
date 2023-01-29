@@ -1,6 +1,7 @@
 package garara
 
 import (
+	"bytes"
 	"context"
 	"encoding/csv"
 	"encoding/xml"
@@ -223,7 +224,7 @@ func (c *V1Client) getErrorDeliveries(ctx context.Context, r V1AuthRequest, host
 		return nil, err
 	}
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, fmt.Sprintf(infoEndpoint, host), strings.NewReader(string(x)))
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, fmt.Sprintf(infoEndpoint, host), bytes.NewBuffer(x))
 	if err != nil {
 		return nil, err
 	}
@@ -287,7 +288,7 @@ func (c *V1Client) deleteReservation(ctx context.Context, r V1AuthRequest, host 
 		return resp, err
 	}
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, fmt.Sprintf(infoEndpoint, host), strings.NewReader(string(x)))
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, fmt.Sprintf(infoEndpoint, host), bytes.NewBuffer(x))
 	if err != nil {
 		return resp, err
 	}
