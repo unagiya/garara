@@ -20,6 +20,12 @@ gararaは[アララメッセージ](https://am.arara.com/)を利用するため�
 配信結果リスト取得APIの実装でRequestID, 期間での結果取得を行うと、詳細リストが取得できない `※1` ので実装見送り。
 ※1 : 私の環境では取得できない状態だった。
 
+V1Clientへの追加メソッド
+- ResDeliverySplitErrors
+  - 配信ステータス取得APIではレスポンスコードが200の場合でもレスポンス内に個別にエラーが入っている。
+  - 上記メソッドを噛ますことで、成功と失敗をそれぞれにレスポンスを分離する。
+
+
 追加メソッド
 - SimpleV1SendListBuilder
   - メールアドレスのstring sliceからSendListを作成する。
