@@ -1,7 +1,7 @@
 # garara
 gararaは[アララメッセージ](https://am.arara.com/)を利用するためのサードパーティライブラリです。
 
-[![MIT License](LICENSE)
+[![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE)
 
 ## APIs
 
